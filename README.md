@@ -50,3 +50,25 @@ Deploy to Vercel/Netlify/Cloudflare Pages. Add the same environment variables in
 - `feat: add category sorting and loading states`
 - `feat: add Better Auth with MongoDB`
 - `feat: add profile update and polish responsive UI`
+
+## MongoDB Atlas setup
+1. Create a free MongoDB Atlas cluster.
+2. Create a database user and password.
+3. Add your current IP in Network Access (for local development).
+4. Copy the driver connection string into `MONGODB_URI`.
+5. Use a database name such as `bazardoor` in `MONGODB_DB`.
+
+Example:
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/?retryWrites=true&w=majority
+MONGODB_DB=bazardoor
+```
+
+## Social login setup
+If you want the Google/GitHub buttons to actually authenticate, add OAuth credentials.
+
+Local callback URLs:
+- Google: `http://localhost:3000/api/auth/callback/google`
+- GitHub: `http://localhost:3000/api/auth/callback/github`
+
+For deployment, replace `http://localhost:3000` with your deployed domain and set `BETTER_AUTH_URL` to that same domain.
