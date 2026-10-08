@@ -1,0 +1,1 @@
+export default function Loading(){return <main className="container-bd py-10"><div className="h-8 w-60 animate-pulse rounded bg-white"/><div className="mt-5 h-40 animate-pulse rounded-2xl bg-white"/><div className="mt-5 h-96 animate-pulse rounded-2xl bg-white"/></main>}
