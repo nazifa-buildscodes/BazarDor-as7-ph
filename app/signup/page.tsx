@@ -1,0 +1,1 @@
+import { AuthShell } from "@/components/auth-shell"; import { SignupForm } from "@/components/signup-form"; export default function Signup(){return <AuthShell title="অ্যাকাউন্ট তৈরি করুন" subtitle="বিনা খরচে সাইন আপ করে সব বিস্তারিত দাম দেখুন।"><SignupForm/></AuthShell>}
