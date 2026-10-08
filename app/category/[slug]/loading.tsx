@@ -1,0 +1,1 @@
+import { HomeSkeleton } from "@/components/home-skeleton"; export default function Loading(){return <main className="container-bd py-10"><div className="mb-7 h-28 animate-pulse rounded-2xl bg-white"/><HomeSkeleton/></main>}
