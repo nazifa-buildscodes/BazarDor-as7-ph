@@ -1,3 +1,39 @@
-import "./globals.css"; import { Header } from "@/components/header"; import { Footer } from "@/components/footer"; import { ToastProvider } from "@/components/toast-provider"; import { getProducts } from "@/lib/api";
-export const metadata={title:"বাজার দর — প্রয়োজনীয় পণ্যের দাম এক নজরে",description:"বাংলাদেশি নিত্যপ্রয়োজনীয় পণ্যের দৈনিক দাম ও পরিবর্তন ট্র্যাক করুন।"};
-export default async function RootLayout({children}:{children:React.ReactNode}){let ticker=[];try{ticker=await getProducts()}catch{}return <html lang="bn"><body><Header ticker={ticker.slice(0,10)}/>{children}<Footer/><ToastProvider/></body></html>}
+import type { ReactNode } from "react";
+import "./globals.css";
+
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { ToastProvider } from "@/components/toast-provider";
+import { getProducts } from "@/lib/api";
+import type { Product } from "@/types";
+
+export const metadata = {
+  title: "বাজার দর — প্রয়োজনীয় পণ্যের দাম এক নজরে",
+  description:
+    "বাংলাদেশি নিত্যপ্রয়োজনীয় পণ্যের দৈনিক দাম ও পরিবর্তন ট্র্যাক করুন।",
+};
+
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  let ticker: Product[] = [];
+
+  try {
+    ticker = await getProducts();
+  } catch {
+    ticker = [];
+  }
+
+  return (
+    <html lang="bn">
+      <body>
+        <Header ticker={ticker.slice(0, 10)} />
+        {children}
+        <Footer />
+        <ToastProvider />
+      </body>
+    </html>
+  );
+}
