@@ -1,3 +1,4 @@
+
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { getMongoDb, mongoClient } from "@/lib/mongodb";
@@ -11,11 +12,20 @@ export const auth = betterAuth({
     process.env.BETTER_AUTH_URL || "http://localhost:3000",
 
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL || "http://localhost:3000",
+    "http://localhost:3000",
+    "https://bazar-dor-as7-ph-zzjl.vercel.app",
   ],
 
   emailAndPassword: {
     enabled: true,
+  },
+
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["google"],
+      requireLocalEmailVerified: false,
+    },
   },
 
   socialProviders: {
