@@ -1,8 +1,12 @@
 import type { Category, Product } from "@/types";
+import {
+  fallbackCategories,
+  fallbackProducts,
+} from "@/lib/fallback-data";
 
 const BASE =
   process.env.NEXT_PUBLIC_BAZAR_API ||
-  "https://api.api-store.workers.dev/api/bazardor";
+  "https://openapi.programming-hero.com/api/bazardor";
 
 async function get<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
@@ -13,10 +17,12 @@ async function get<T>(path: string): Promise<T> {
     throw new Error(`API request failed: ${res.status}`);
   }
 
-  return res.json();
+  const json = await res.json();
+
+  // Support both a raw response and a response wrapped in "data".
+  return (json?.data ?? json) as T;
 }
 
-// Bengali category name → API category slug
 const categorySlugMap: Record<string, string> = {
   "চাল": "chal",
   "ডাল": "dal",
@@ -30,24 +36,50 @@ const categorySlugMap: Record<string, string> = {
 
 function normalizeCategorySlug(category?: string) {
   if (!category) return undefined;
-
   return categorySlugMap[category] || category;
 }
 
-export async function getProducts(category?: string) {
+export async function getProducts(
+  category?: string
+): Promise<Product[]> {
   const slug = normalizeCategorySlug(category);
 
-  return get<Product[]>(
-    slug
-      ? `/products?category=${encodeURIComponent(slug)}`
-      : "/products"
-  );
+  try {
+    const products = await get<Product[]>(
+      slug
+        ? `/products?category=${encodeURIComponent(slug)}`
+        : "/products"
+    );
+
+    if (Array.isArray(products) && products.length > 0) {
+      return products;
+    }
+  } catch (error) {
+    console.error("Products API unavailable; using fallback data.", error);
+  }
+
+  return slug
+    ? fallbackProducts.filter(
+        (product) =>
+          product.category === slug ||
+          product.categoryNameBn === category
+      )
+    : fallbackProducts;
 }
 
-export async function getProduct(slug: string) {
-  const all = await getProducts();
+export async function getProduct(slug: string): Promise<Product> {
+  try {
+    const products = await getProducts();
+    const product = products.find(
+      (item) => item.slug === slug || item.id === slug
+    );
 
-  const product = all.find(
+    if (product) return product;
+  } catch (error) {
+    console.error("Could not load product.", error);
+  }
+
+  const product = fallbackProducts.find(
     (item) => item.slug === slug || item.id === slug
   );
 
@@ -58,14 +90,37 @@ export async function getProduct(slug: string) {
   return product;
 }
 
-export async function getCategories() {
-  return get<Category[]>("/categories");
+export async function getCategories(): Promise<Category[]> {
+  try {
+    const categories = await get<Category[]>("/categories");
+
+    if (Array.isArray(categories) && categories.length > 0) {
+      return categories;
+    }
+  } catch (error) {
+    console.error("Categories API unavailable; using fallback data.", error);
+  }
+
+  return fallbackCategories;
 }
 
-export async function getCategory(slug: string) {
+export async function getCategory(slug: string): Promise<Category[]> {
   const normalizedSlug = normalizeCategorySlug(slug);
 
-  return get<Category[]>(
-    `/categories/${encodeURIComponent(normalizedSlug || slug)}`
+  try {
+    const categories = await get<Category[]>(
+      `/categories/${encodeURIComponent(normalizedSlug || slug)}`
+    );
+
+    if (Array.isArray(categories) && categories.length > 0) {
+      return categories;
+    }
+  } catch (error) {
+    console.error("Category API unavailable; using fallback data.", error);
+  }
+
+  return fallbackCategories.filter(
+    (category) =>
+      category.slug === normalizedSlug || category.nameBn === slug
   );
 }
