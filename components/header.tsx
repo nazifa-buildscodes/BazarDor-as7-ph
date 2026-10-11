@@ -68,7 +68,6 @@ export function Header({ ticker = [] }: { ticker?: Product[] }) {
           <div className="hidden items-center gap-3 md:flex">
             {logged ? (
               <div className="relative">
-                {/* Name + Avatar + Dropdown Arrow */}
                 <button
                   type="button"
                   onClick={() =>
@@ -91,10 +90,8 @@ export function Header({ ticker = [] }: { ticker?: Product[] }) {
                   </span>
                 </button>
 
-                {/* Account Dropdown */}
                 {accountMenuOpen && (
                   <>
-                    {/* Click outside to close */}
                     <button
                       type="button"
                       aria-label="Close account menu"
@@ -106,7 +103,6 @@ export function Header({ ticker = [] }: { ticker?: Product[] }) {
                       role="menu"
                       className="absolute right-0 top-full z-50 mt-3 w-68 rounded-2xl border border-[#e1e8e2] bg-white p-3 shadow-xl"
                     >
-                      {/* User information */}
                       <div className="border-b border-[#e8eee9] px-3 pb-3">
                         <p className="truncate font-semibold text-[#26352b]">
                           {session?.user.name || "User"}
@@ -117,7 +113,6 @@ export function Header({ ticker = [] }: { ticker?: Product[] }) {
                         </p>
                       </div>
 
-                      {/* My Profile */}
                       <Link
                         href="/profile"
                         role="menuitem"
@@ -128,7 +123,6 @@ export function Header({ ticker = [] }: { ticker?: Product[] }) {
                         <span>আমার প্রোফাইল</span>
                       </Link>
 
-                      {/* Sign Out */}
                       <button
                         type="button"
                         role="menuitem"
@@ -174,21 +168,29 @@ export function Header({ ticker = [] }: { ticker?: Product[] }) {
         </div>
 
         {/* Categories */}
-        <nav className="border-t border-[#eef2ef]">
-          <div className="container-bd hide-scrollbar flex gap-5 overflow-x-auto py-3 text-sm font-semibold">
-            {cats.map(([label, slug, icon]) => (
-              <Link
-                key={slug}
-                href={`/category/${slug}`}
-                className={`shrink-0 rounded-lg px-3 py-1.5 ${
-                  path === `/category/${slug}`
-                    ? "bg-[#078f45] text-white"
-                    : ""
-                }`}
-              >
-                {icon} {label}
-              </Link>
-            ))}
+        <nav
+          aria-label="পণ্যের ক্যাটাগরি"
+          className="border-t border-[#eef2ef]"
+        >
+          <div className="container-bd hide-scrollbar flex gap-2 overflow-x-auto py-3 text-sm font-semibold">
+            {cats.map(([label, slug, icon]) => {
+              const isActive = path === `/category/${slug}`;
+
+              return (
+                <Link
+                  key={slug}
+                  href={`/category/${slug}`}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`shrink-0 rounded-lg px-3 py-2 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#078f45] focus-visible:ring-offset-2 ${
+                    isActive
+                      ? "bg-[#078f45] text-white shadow-sm"
+                      : "text-[#26352b] hover:bg-[#e8f5ec] hover:text-[#078f45]"
+                  }`}
+                >
+                  {icon} {label}
+                </Link>
+              );
+            })}
           </div>
         </nav>
 
